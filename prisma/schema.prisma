@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Station {
+  id Int @id @default(autoincrement())
+
+  ports Port[]
+}
+
+model Port {
+  id Int @id @default(autoincrement())
+
+  index     Int
+  stationId Int
+
+  station Station @relation(fields: [stationId], references: [id])
+  sensor  Sensor?
+
+  @@unique([stationId, index])
+}
+
+model Sensor {
+  id     Int    @id @default(autoincrement())
+  sn     String @unique
+  portId Int?   @unique
+
+  port Port? @relation(fields: [portId], references: [id])
+}
